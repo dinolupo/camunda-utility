@@ -6,7 +6,7 @@ Build Executable
 -----------
 > MacOs/Linux
 ```bash
-	go build -o camunda-utility
+go build -o camunda-utility
 ```
 
 > Cross Compiling for Windows
