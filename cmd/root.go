@@ -14,6 +14,8 @@ var host string
 var port int
 var Camunda *client.Client
 
+var key *string
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "camunda-utility",

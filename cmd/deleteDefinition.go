@@ -7,8 +7,6 @@ import (
 	"os"
 )
 
-var key *string
-
 // deleteDefinitionCmd represents the deleteDefinition command
 var deleteDefinitionCmd = &cobra.Command{
 	Use:   "deleteDefinition",
@@ -32,6 +30,11 @@ camunda-utility deleteDefinition --key <process-definition-key>`,
 		if err != nil {
 			os.Exit(1)
 		}
+
+		if len(result) == 0 {
+			fmt.Printf("No process definitions found with key=%+v\n", *key)
+		}
+
 		for _, s := range result {
 			fmt.Printf("Deleting Process Definition Cascade: %+v\n", *s)
 			err := pd.Delete(client.QueryProcessDefinitionBy{Id: &s.Id}, map[string]string{"cascade": "true"})
