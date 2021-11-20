@@ -11,7 +11,10 @@ go build -o camunda-utility
 
 > Cross Compiling for Windows
 ```bash
-GOOS=windows GOARCH=386 go build -o camunda-utility.exe
+GOOS=windows GOARCH=amd64 go build -o bin/windows/camunda-utility.exe
+GOOS=linux GOARCH=amd64 go build -o bin/linux/camunda-utility
+GOOS=linux GOARCH=arm go build -o bin/linux-arm/camunda-utility
+GOOS=darwin GOARCH=arm64 go build -o bin/darwin-arm/camunda-utility
 ```
 
 Usage
@@ -21,7 +24,7 @@ Usage
 
 https://github.com/dinolupo/spring-camunda-template
 
-> delete all definitions and instances 
+> delete all definitions and instances
 ```bash
 ./camunda-utility deleteDefinition --host localhost --port 8081 --key "@all"
 ```
