@@ -79,3 +79,8 @@ MIT
 AUTHOR
 -----------
 Dino Lupo <dino.lupo at gmail.com>
+
+BUILD REFERENCE
+------------
+
+https://www.digitalocean.com/community/tutorials/how-to-build-go-executables-for-multiple-platforms-on-ubuntu-16-04
