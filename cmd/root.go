@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-
 	"github.com/dinolupo/camunda-utility/pkg/camunda/client"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,7 +13,7 @@ var host string
 var port int
 var Camunda *client.Client
 
-var key *string
+var key string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

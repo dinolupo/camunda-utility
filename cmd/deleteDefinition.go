@@ -10,29 +10,30 @@ import (
 // deleteDefinitionCmd represents the deleteDefinition command
 var deleteDefinitionCmd = &cobra.Command{
 	Use:   "deleteDefinition",
-	Short: "Delete Camunda definition and instances for a single or all process definitions",
-	Long: `Use this command to delete definition and its instances of a single process definition
-	key, or delete all definitions and their associated instances, for example:
+	Short: "Delete one or all Camunda definitions along with instances",
+	Long: `Use this command to delete one or all definitions and its instances passing, for example:
 
 camunda-utility deleteDefinition --key @all
 camunda-utility deleteDefinition --key <process-definition-key>`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if *key == "" {
+		if key == "" {
 			fmt.Println("The parameter key must have a value.")
 			os.Exit(1)
 		}
 		query := make(map[string]string)
-		if *key != "@all" {
-			query["key"] = *key
+		if key != "@all" {
+			query["key"] = key
 		}
 		pd := client.ProcessDefinition{Client: Camunda}
 		result, err := pd.GetList(query)
 		if err != nil {
+			fmt.Printf("ERROR: %+v\n", err.Error())
 			os.Exit(1)
 		}
 
 		if len(result) == 0 {
-			fmt.Printf("No process definitions found with key=%+v\n", *key)
+			fmt.Printf("No process definitions found with key=%+v\n", key)
+			os.Exit(0)
 		}
 
 		for _, s := range result {
@@ -47,15 +48,6 @@ camunda-utility deleteDefinition --key <process-definition-key>`,
 
 func init() {
 	rootCmd.AddCommand(deleteDefinitionCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deleteDefinitionCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	key = deleteDefinitionCmd.Flags().String("key", "", "select @all for all instances, or process-definition-key (required)")
+	deleteDefinitionCmd.Flags().StringVarP(&key, "key", "k", "", "select @all for all instances, or process-definition-key (required)")
 	_ = deleteDefinitionCmd.MarkFlagRequired("key")
 }

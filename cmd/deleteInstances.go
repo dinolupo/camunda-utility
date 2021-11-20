@@ -30,37 +30,37 @@ var deleteInstancesCmd = &cobra.Command{
 
 	camunda-utility deleteInstances --key <process-definition-key>`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if *key == "" {
+		if key == "" {
 			fmt.Println("The parameter key must have a value.")
 			os.Exit(1)
 		}
 		query := make(map[string]string)
-		query["processDefinitionKey"] = *key
+		query["processDefinitionKey"] = key
 		pd := client.ProcessInstance{Client: Camunda}
 		result, err := pd.GetList(query)
 		if err != nil {
+			fmt.Printf("ERROR: %+v\n", err.Error())
 			os.Exit(1)
 		}
 		if len(result) == 0 {
-			fmt.Printf("No process instances found with processDefinitionKey=%+v\n", *key)
+			fmt.Printf("No process instances found with processDefinitionKey=%+v\n", key)
+			os.Exit(0)
 		}
-		// TBC
+
+		for _, s := range result {
+			fmt.Printf("Deleting Instance: %+v\n", s.Id)
+			err := pd.Delete(s.Id, query)
+			if err != nil {
+				fmt.Printf("ERROR: %+v\n", err.Error())
+				os.Exit(1)
+			}
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deleteInstancesCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deleteInstancesCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// deleteInstancesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	key = deleteInstancesCmd.Flags().String("key", "", "the process-definition-key (required)")
+	deleteInstancesCmd.Flags().StringVarP(&key, "key", "k", "", "the process-definition-key (required)")
 	_ = deleteInstancesCmd.MarkFlagRequired("key")
-
 }
