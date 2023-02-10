@@ -54,6 +54,12 @@ Use "camunda-utility [command] --help" for more information about a command.
 
 Testing
 -----------
+
+Run on the fly
+```bash
+go run main.go --host localhost --port 8081 deleteInstances --key @all
+```
+
 Unit-tests:
 ```bash
 go test -v -race ./...

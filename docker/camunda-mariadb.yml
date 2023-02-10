@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+       - MYSQL_ROOT_PASSWORD=camunda
+       - MYSQL_USER=camunda
+       - MYSQL_PASSWORD=camunda
+       - MYSQL_DATABASE=process-engine
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8082:8080
+
+  camunda-mariadb:
+     #image: camunda/camunda-bpm-platform:7.15.0
+     image: dinolupo/camunda-bpm-platform:latest
+     env_file:
+        - db.env
+     ports:
+        - "8081:8080"
+     restart: unless-stopped
+     #     volumes:
+     #   - $HOME\docker\camunda-webapps:/camunda/webapps/

@@ -30,6 +30,16 @@ func (p *ProcessInstance) Delete(id string, query map[string]string) error {
 	return err
 }
 
+func (p *ProcessInstance) GetListByProcessId(id string, query map[string]string) (processInstances []*ResProcessInstance, err error) {
+	res, err := p.Client.doGet("/process-instance/"+id, query)
+	if err != nil {
+		return
+	}
+
+	err = p.Client.readJsonResponse(res, &processInstances)
+	return
+}
+
 // GetList queries for process instances that fulfill given parameters.
 // Parameters may be static as well as dynamic runtime properties of process instances.
 // The size of the result set can be retrieved by using the GetCount method.

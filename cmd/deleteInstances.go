@@ -19,39 +19,72 @@ import (
 	"fmt"
 	"github.com/dinolupo/camunda-utility/pkg/camunda/client"
 	"github.com/spf13/cobra"
+	"github.com/dinolupo/camunda-utility/pkg/utils"
 	"os"
 )
 
 // deleteInstancesCmd represents the deleteInstances command
 var deleteInstancesCmd = &cobra.Command{
 	Use:   "deleteInstances",
-	Short: "Delete all instances of a process definition",
-	Long: `Use this option to delete all instances of a specified process definition key, for example:
+	Short: "Delete all instances of one or all process definitions",
+	Long: `Use this option to delete all instances of a process definition key or all of them, for example:
 
-	camunda-utility deleteInstances --key <process-definition-key>`,
+	camunda-utility deleteInstances --key <process-definition-key>
+	camunda-utility deleteInstances --key @all`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if key == "" {
 			fmt.Println("The parameter key must have a value.")
 			os.Exit(1)
 		}
+		// ----------------------
 		query := make(map[string]string)
-		query["processDefinitionKey"] = key
-		pd := client.ProcessInstance{Client: Camunda}
+		if key != "@all" {
+			query["key"] = key
+		}
+		pd := client.ProcessDefinition{Client: Camunda}
 		result, err := pd.GetList(query)
 		if err != nil {
 			fmt.Printf("ERROR: %+v\n", err.Error())
 			os.Exit(1)
 		}
+
 		if len(result) == 0 {
-			fmt.Printf("No process instances found with processDefinitionKey=%+v\n", key)
+			if key != "@all" {
+				fmt.Printf("No process definitions found with key=%+v\n", key)
+			} else {
+				fmt.Printf("No process definitions found.\n")
+			}
 			os.Exit(0)
 		}
 
 		for _, s := range result {
-			fmt.Printf("Deleting Instance: %+v\n", s.Id)
-			err := pd.Delete(s.Id, query)
+			res, _ := utils.PrettyStruct(*s)
+			fmt.Printf("%+v,\n", res)
+		}
+
+		for _, s := range result {
+			fmt.Printf("Deleting all Process Instances of Definition: %+v\n", s.Id)
+
+			pi := client.ProcessInstance{Client: Camunda}
+			result, err := pi.GetListByProcessId(s.Id, query)
 			if err != nil {
 				fmt.Printf("ERROR: %+v\n", err.Error())
+				os.Exit(1)
+			}
+			if len(result) == 0 {
+				fmt.Printf("No process instances found with processDefinitionKey=%+v\n", key)
+				os.Exit(0)
+			}
+
+			for _, s := range result {
+				fmt.Printf("\tDeleting Instance: %+v query: %+v\n", s.Id, query)
+				//err := pi.Delete(s.Id, query)
+				if err != nil {
+					fmt.Printf("ERROR1: %+v\n", err.Error())
+					os.Exit(1)
+				}
+			}
+			if err != nil {
 				os.Exit(1)
 			}
 		}
@@ -60,7 +93,6 @@ var deleteInstancesCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(deleteInstancesCmd)
-
-	deleteInstancesCmd.Flags().StringVarP(&key, "key", "k", "", "the process-definition-key (required)")
+	deleteInstancesCmd.Flags().StringVarP(&key, "key", "k", "", "select @all for all definitions, or process-definition-key (required)")
 	_ = deleteInstancesCmd.MarkFlagRequired("key")
 }
