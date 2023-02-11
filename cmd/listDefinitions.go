@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"github.com/dinolupo/camunda-utility/pkg/camunda/client"
 	"github.com/dinolupo/camunda-utility/pkg/utils"
 	"github.com/spf13/cobra"
@@ -33,17 +33,17 @@ var listDefinitionsCmd = &cobra.Command{
 		query := make(map[string]string)
 		result, err := pd.GetList(query)
 		if err != nil {
-			fmt.Printf("ERROR: %+v\n", err.Error())
+			log.Printf("ERROR: %+v\n", err.Error())
 			os.Exit(1)
 		}
 
 		if len(result) == 0 {
-			fmt.Printf("No process definition found")
+			log.Printf("No process definition found")
 		}
 
 		for _, s := range result {
 			res, _ := utils.PrettyStruct(*s)
-			fmt.Printf("%+v,\n", res)
+			log.Printf("%+v,\n", res)
 		}
 	},
 }

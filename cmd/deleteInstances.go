@@ -16,11 +16,11 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"github.com/dinolupo/camunda-utility/pkg/camunda/client"
 	"github.com/spf13/cobra"
 	"github.com/dinolupo/camunda-utility/pkg/utils"
 	"os"
+	"log"
 )
 
 // deleteInstancesCmd represents the deleteInstances command
@@ -33,7 +33,7 @@ var deleteInstancesCmd = &cobra.Command{
 	camunda-utility deleteInstances --key @all`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if key == "" {
-			fmt.Println("The parameter key must have a value.")
+			log.Println("The parameter key must have a value.")
 			os.Exit(1)
 		}
 		// ----------------------
@@ -44,43 +44,44 @@ var deleteInstancesCmd = &cobra.Command{
 		pd := client.ProcessDefinition{Client: Camunda}
 		result, err := pd.GetList(query)
 		if err != nil {
-			fmt.Printf("ERROR: %+v\n", err.Error())
+			log.Fatal(err.Error())
 			os.Exit(1)
 		}
 
 		if len(result) == 0 {
 			if key != "@all" {
-				fmt.Printf("No process definitions found with key=%+v\n", key)
+				log.Printf("No process definitions found with key=%+v\n", key)
 			} else {
-				fmt.Printf("No process definitions found.\n")
+				log.Printf("No process definitions found.\n")
 			}
 			os.Exit(0)
 		}
 
+		// Print list of process definitions
 		for _, s := range result {
 			res, _ := utils.PrettyStruct(*s)
-			fmt.Printf("%+v,\n", res)
+			log.Printf("%+v\n", res)
 		}
 
 		for _, s := range result {
-			fmt.Printf("Deleting all Process Instances of Definition: %+v\n", s.Id)
+			log.Printf("Deleting all Process Instances of Definition: %+v\n", s.Id)
 
 			pi := client.ProcessInstance{Client: Camunda}
-			result, err := pi.GetListByProcessId(s.Id, query)
+			query["processDefinitionId"] = s.Id
+			result, err := pi.GetList(query)
 			if err != nil {
-				fmt.Printf("ERROR: %+v\n", err.Error())
+				log.Fatal(err.Error())
 				os.Exit(1)
 			}
 			if len(result) == 0 {
-				fmt.Printf("No process instances found with processDefinitionKey=%+v\n", key)
-				os.Exit(0)
+				log.Printf("No process instances found with query=%+v\n", query)
 			}
 
-			for _, s := range result {
-				fmt.Printf("\tDeleting Instance: %+v query: %+v\n", s.Id, query)
-				//err := pi.Delete(s.Id, query)
+			for _, instance := range result {
+				log.Printf("\tDeleting Instance: %+v query: %+v\n", instance.Id, query)
+				err := pi.Delete(instance.Id, nil)
 				if err != nil {
-					fmt.Printf("ERROR1: %+v\n", err.Error())
+					log.Fatal(err.Error())
 					os.Exit(1)
 				}
 			}

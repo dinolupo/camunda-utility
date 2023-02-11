@@ -3,16 +3,18 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
+	"log"
+	"fmt"
+//	"github.com/dinolupo/camunda-utility/pkg/utils"
 )
 
 const DefaultTimeoutSec = 60
-const PackageVersion = "{{version}}"
+const PackageVersion = "1.0.0"
 const DefaultUserAgent = "CamundaClientGo/" + PackageVersion
 const Protocol = "http://"
 const DefaultHost = "localhost"
@@ -131,15 +133,47 @@ func (c *Client) do(method, path string, query map[string]string, body io.Reader
 
 	//req.SetBasicAuth(c.apiUser, c.apiPassword)
 
+	log.Printf("%s %s\n", method, url)
+	log.Println("HEADERS:")
+	for k, v := range req.Header {
+		log.Printf("\t%s: %s\n", k, v)
+	}
+
+	var requestBody []byte
+	if body != nil {
+		requestBody, err = ioutil.ReadAll(body)
+		if err != nil {
+			return nil, err
+		}
+		log.Println("BODY:")
+		log.Println(string(requestBody))
+	}
+
 	res, err = c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
+
+	// log.Printf("Content-Length: %d\n", res.ContentLength)
+	// responseBody, err := ioutil.ReadAll(res.Body)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// prettyResponse, err := utils.PrettyString(string(responseBody))
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// log.Printf("RESPONSE BODY: %s\n", prettyResponse)
+
+	// responseBody, err := ioutil.ReadAll(res.Body)
+	// log.Printf("RESPONSE BODY: %s\n", string(responseBody))
+
+
 	if err := c.checkResponse(res); err != nil {
 		return nil, err
 	}
 
-	return
+	return res, err
 }
 
 func (c *Client) buildUrl(path string, query map[string]string) (string, error) {

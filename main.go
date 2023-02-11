@@ -15,8 +15,17 @@ limitations under the License.
 */
 package main
 
-import "github.com/dinolupo/camunda-utility/cmd"
+import (
+	"github.com/dinolupo/camunda-utility/cmd"
+	"log"
+)
+
+func init() {
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
+	log.Println("Inizializzazione log avvenuta con successo")
+}
 
 func main() {
 	cmd.Execute()
 }
+

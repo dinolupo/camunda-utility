@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"github.com/dinolupo/camunda-utility/pkg/camunda/client"
 	"github.com/spf13/cobra"
 	"os"
@@ -17,7 +17,7 @@ camunda-utility deleteDefinition --key @all
 camunda-utility deleteDefinition --key <process-definition-key>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if key == "" {
-			fmt.Println("The parameter key must have a value.")
+			log.Println("The parameter key must have a value.")
 			os.Exit(1)
 		}
 		query := make(map[string]string)
@@ -27,17 +27,17 @@ camunda-utility deleteDefinition --key <process-definition-key>`,
 		pd := client.ProcessDefinition{Client: Camunda}
 		result, err := pd.GetList(query)
 		if err != nil {
-			fmt.Printf("ERROR: %+v\n", err.Error())
+			log.Printf("ERROR: %+v\n", err.Error())
 			os.Exit(1)
 		}
 
 		if len(result) == 0 {
-			fmt.Printf("No process definitions found with key=%+v\n", key)
+			log.Printf("No process definitions found with key=%+v\n", key)
 			os.Exit(0)
 		}
 
 		for _, s := range result {
-			fmt.Printf("Deleting Process Definition Cascade: %+v\n", *s)
+			log.Printf("Deleting Process Definition Cascade: %+v\n", *s)
 			err := pd.Delete(client.QueryProcessDefinitionBy{Id: &s.Id}, map[string]string{"cascade": "true"})
 			if err != nil {
 				os.Exit(1)
