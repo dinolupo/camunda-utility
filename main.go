@@ -18,14 +18,24 @@ package main
 import (
 	"github.com/dinolupo/camunda-utility/cmd"
 	"log"
+	//"github.com/rivo/tview"
 )
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
-	log.Println("Inizializzazione log avvenuta con successo")
+	log.Println("Log initialized")
 }
 
 func main() {
 	cmd.Execute()
+	// app := tview.NewApplication()
+	// form := tview.NewForm().
+	// 	AddInputField("Label:", "", 20, nil, nil).
+	// 	AddButton("Go", func() {
+	// 		app.Stop()
+	// 	})
+	// if err := app.SetRoot(form, true).Run(); err != nil {
+	// 	panic(err)
+	// }
 }
 

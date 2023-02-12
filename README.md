@@ -2,27 +2,18 @@
 
 This software aims to build a command line utility helper for the Camunda platform.
 
-Build Executable
------------
-> MacOs/Linux
-```bash
-go build -o camunda-utility
-```
-
-> Cross Compiling for Windows
-```bash
-GOOS=windows GOARCH=amd64 go build -o bin/windows/camunda-utility.exe
-GOOS=linux GOARCH=amd64 go build -o bin/linux/camunda-utility
-GOOS=linux GOARCH=arm go build -o bin/linux-arm/camunda-utility
-GOOS=darwin GOARCH=arm64 go build -o bin/darwin-arm/camunda-utility
-```
-
 Usage
 -----------
 
-> run a local camunda on port 8081 using the Docker at:
+> run a local example camunda on port 8081 using the Docker folder:
+```sh
+docker compose -p camunda -f camunda-mariadb.yml up
+```
 
-https://github.com/dinolupo/spring-camunda-template
+> delete all instances of all definitions
+```sh
+./camunda-utility --host localhost --port 8081 deleteInstances --key @all
+```
 
 > delete all definitions and instances
 ```bash
@@ -50,6 +41,21 @@ Flags:
       --port int        Camunda Port (default 8080)
 
 Use "camunda-utility [command] --help" for more information about a command.
+```
+
+Build Executable
+-----------
+> MacOs/Linux
+```bash
+go build -o camunda-utility
+```
+
+> Cross Compiling for Windows
+```bash
+GOOS=windows GOARCH=amd64 go build -o bin/windows/camunda-utility.exe
+GOOS=linux GOARCH=amd64 go build -o bin/linux/camunda-utility
+GOOS=linux GOARCH=arm go build -o bin/linux-arm/camunda-utility
+GOOS=darwin GOARCH=arm64 go build -o bin/darwin-arm/camunda-utility
 ```
 
 Testing

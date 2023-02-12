@@ -18,7 +18,7 @@ package cmd
 import (
 	"github.com/dinolupo/camunda-utility/pkg/camunda/client"
 	"github.com/spf13/cobra"
-	"github.com/dinolupo/camunda-utility/pkg/utils"
+	//"github.com/dinolupo/camunda-utility/pkg/utils"
 	"os"
 	"log"
 )
@@ -58,10 +58,10 @@ var deleteInstancesCmd = &cobra.Command{
 		}
 
 		// Print list of process definitions
-		for _, s := range result {
-			res, _ := utils.PrettyStruct(*s)
-			log.Printf("%+v\n", res)
-		}
+		// for _, s := range result {
+		// 	res, _ := utils.PrettyStruct(*s)
+		// 	log.Printf("%+v\n", res)
+		// }
 
 		for _, s := range result {
 			log.Printf("Deleting all Process Instances of Definition: %+v\n", s.Id)
