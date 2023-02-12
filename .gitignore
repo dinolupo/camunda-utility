@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+camunda-utility
 
 # Test binary, built with `go test -c`
 *.test
