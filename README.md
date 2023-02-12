@@ -23,24 +23,12 @@ docker compose -p camunda -f camunda-mariadb.yml up
 > help
 ```bash
 ./camunda-utility --help
-Camunda Utility is a command line tool that permits to execute
-        administrative tasks like deleting all definitions and instances.
+```
 
-Usage:
-  camunda-utility [command]
-
-Available Commands:
-  completion       generate the autocompletion script for the specified shell
-  deleteDefinition Delete Camunda definition and instances for a single or all process definitions
-  help             Help about any command
-
-Flags:
-      --config string   config file (default is $HOME/.camunda-utility.yaml)
-  -h, --help            help for camunda-utility
-      --host string     Camunda Host (default "localhost")
-      --port int        Camunda Port (default 8080)
-
-Use "camunda-utility [command] --help" for more information about a command.
+> delete Camunda stopped containers and volumes
+```sh
+docker rm -f $(docker ps -a -q)
+docker volume rm $(docker volume ls -q)
 ```
 
 Build Executable
